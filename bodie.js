@@ -92,6 +92,12 @@ function choiceToString(c) {
     case "wear": {
       return "Wear " + args[1];
     }
+    case "ask": {
+      return "Ask " + args[1] + " about " + args[2];
+    }
+    case "tell": {
+      return "Tell " + args[1] + " about " + args[2];
+    }
     default: return op + " " + args[args.length - 1];
   }
 }
@@ -185,6 +191,9 @@ function cmdToAction(cmd) {
     case "wear": {
       return wear(args[0], args[1]);
     }
+    case "ask": {
+      return ask(args[0], args[1], args[2]);
+    }
     default: return undefined;
   }
 }
@@ -250,19 +259,11 @@ function generate_choices() {
         if (give(c, c2, thing_held).applies) {
           choices.push({ op: "give", args: [c, c2, thing_held] });
         }
+        if (ask(c, c2, thing_held).applies) {
+          choices.push({ op: "ask", args: [c, c2, thing_held] });
+        }
       }
     }
-    /*
-     // wearing it
-     for (var thi in things_held) {
-         thing_held = things_held[thi];
- 
-         //if (clothing_on[c] != thing_held && c == location_of[thing_held]) {
-         if (wear(c, thing_held).applies) {
-             choices.push({ op: "wear", args: [c, thing_held] });
-         }
-     }*/
-
     // places to move
     for (var li in locations) {
       var l = locations[li];
@@ -280,6 +281,15 @@ function generate_choices() {
 
 function begin() { render(); }
 
+function ask(agent, npc, thing) {
+  var applies = (location_of[thing] == agent) && (location_of[agent] == location_of[npc]);
+  var text = "";
+  function effects() {
+    var text = agent + " ask " + npc + " about the " + thing + ".";
+    return text;
+  }
+  return { applies: applies, effects: effects, text: text };
+}
 
 
 function take(agent, thing) {
@@ -330,57 +340,6 @@ function take(agent, thing) {
 
 }
 
-/*
-function ignore(agent, thing) {
-
-  var applies = location_of[agent] == location_of[thing];
-
-  function effects() {
-    //checks if the thing the agent wants to grab is a 'human' object
-    var set = 0;
-    for(var i=0; i<npcs.length;i++){
-
-      if(thing == npcs[i]){
-        var set = 1
-      }
-
-    }
-    if(set == 0){
-
-      location_of[thing] = agent;
-      
-    }
-  }
-
-  return {applies:applies, effects:effects, text:text};
-
-}
-*/
-
-/*
-function grasp(agent, thing) {
-
-  var applies = location_of[agent] == location_of[thing];
-
-  function effects() {
-    //checks if the thing the agent wants to grab is a 'human' object
-    var set = 0;
-    for(var i=0; i<npcs.length;i++){
-
-      if(thing == npcs[i]){
-        var set = 1
-      }
-
-    }
-    if(set == 0){
-
-      location_of[thing] = agent;
-
-    }
-  }
-  return {applies:applies, effects:effects, text:text};
-}
-*/
 
 function go(agent, place) {
 
