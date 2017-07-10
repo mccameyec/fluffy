@@ -63,6 +63,7 @@ var knowledge =
     Insurance: "unknown" 
   }
 
+
 var inventory = 
   {
     "Sheriff Hayes": "",
@@ -140,18 +141,26 @@ function displayInventory() {
 
 function displayChoices() {
   // current_choices = generate_choices();
-  toRender = "";
+  toRenderAction = "";
+  toRenderConversation = "";
   for (var i = 0; i < current_choices.length; i++) {
     var choice = current_choices[i];
     var last_character;
     if (choice.args[0] != last_character) {
-      toRender += "<br>" + "Actions for " + choice.args[0] + "<br>";
+      toRenderAction += "<br>" + "Actions for " + choice.args[0] + "<br>";
+      toRenderConversation += "<br>" + "Conversation for " + choice.args[0] + "<br>";
     }
-    toRender += "<a onclick=selectChoice(" + i + ") href=javascript:void(0);>" + choiceToString(choice) + "</a><br>";
-
+    //seperate operators for conversation and action
+    if (choice.op == "talk" || choice.op == "ask"){
+      toRenderConversation += "<a onclick=selectChoice(" + i + ") href=javascript:void(0);>" + choiceToString(choice) + "</a><br>";
+    }
+    else{
+      toRenderAction += "<a onclick=selectChoice(" + i + ") href=javascript:void(0);>" + choiceToString(choice) + "</a><br>";
+    }
     last_character = choice.args[0];
   }
-  document.getElementById("choices").innerHTML = toRender;
+  document.getElementById("actions").innerHTML = toRenderAction;
+  document.getElementById("conversation").innerHTML = toRenderConversation;
 }
 
 function render() {
